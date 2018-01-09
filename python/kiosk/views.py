@@ -5,4 +5,8 @@ def welcome(request):
     return render(request, "kiosk/welcome.html")
 
 def outlook_login(request):
-    return render(request, "kiosk/outlook_login.html")
+    signin_url = "#"
+    context = {
+        'signin_url': signin_url,
+    }
+    return render(request, "kiosk/outlook_login.html", context)
