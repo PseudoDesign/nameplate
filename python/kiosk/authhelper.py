@@ -1,9 +1,9 @@
 from urllib.parse import urlencode
-keys = __import__(".appkeys.py")
+from .appkeys import ExchangeAuthKeys
 
 # Client ID and secret
-client_id = 'YOUR APP ID HERE'
-client_secret = 'YOUR APP PASSWORD HERE'
+client_id = ExchangeAuthKeys.ID
+client_secret = ExchangeAuthKeys.PASSWORD
 
 # Constant strings for OAuth2 flow
 # The OAuth authority
