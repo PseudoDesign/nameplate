@@ -16,9 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from kiosk.views import welcome
+from kiosk.views import welcome, outlook_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'', welcome),
+    path(r'', outlook_login),
 ]
