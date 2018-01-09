@@ -1,0 +1,38 @@
+guest_info:
+  # This is the name that the VirtualBox instance will use
+  name: "Nameplate Development Instance"
+  # System memory allocated to this instance
+  memory: 2048
+  # CPU threads available to this instance
+  threads: 2
+  # The name of the os/distro of this system.  Used to determine which
+  # subdirectory of "provision" features are used by the provisioning scripts
+  os: "debian"
+  # The base box name as required by HashiCorp Atlas.
+  # See https://atlas.hashicorp.com/
+  base_box: "bento/ubuntu-17.04"
+  # Use "true" if you want the VirtualBox GUI window to be generated.
+  # Use "false" for a headless instance.
+  # Note that you'll probably need to install a desktop environment if
+  # you use "true" here -- adding "lubuntu_desktop" to the "package_manager"
+  # feature below is an easy solution
+  use_gui: false
+  # The default username.  This has recently changed in Ubuntu and YMMV
+  # in other distros.  Use "vagrant" for Trusty and earlier and "ubuntu"
+  # for Xenial and later
+  default_user: vagrant
+  # The root folder of the project, relative to the Vagrantfile
+  project_root: nameplate
+features:
+  # Package manager will use apt-get (on debian) to fetch packages
+  - name: package_manager
+    target: python3.6
+  - name: pip
+    environment: python3.6
+    target: django django-jasmine
+  - name: django
+    test_port: '8000'
+  - name: mariadb
+    databases: nameplate
+    sql_user: vagrant
+    password_location: /share/.mysql_user_pass
