@@ -1,5 +1,5 @@
-from urllib.parse import quote, urlencode
-
+from urllib.parse import urlencode
+keys = __import__(".appkeys.py")
 
 # Client ID and secret
 client_id = 'YOUR APP ID HERE'
