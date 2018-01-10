@@ -31,6 +31,7 @@ def outlook_login(request):
     if token:
         context['logged_in'] = True
         context['user_email'] = kiosk.outlook_service.get_me(token)['mail']
+        context['logout_link'] = reverse("outlook_logout")
     else:
         context['logged_in'] = False
     return render(request, "kiosk/outlook_login.html", context)

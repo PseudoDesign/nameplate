@@ -28,7 +28,7 @@ class TestLoginPage(TestCase):
         get_access_token.return_value = "12345"
         get_me.return_value = {'mail': "my@email.com"}
         response = self.client.get(reverse('outlook_login'))
-        self.assertContains(response, reverse("outlook_logout"))
+        self.assertEqual(response.context['logout_link'], reverse("outlook_logout"))
 
     @patch("kiosk.outlook_service.get_me")
     @patch("kiosk.auth_helper.get_access_token")
