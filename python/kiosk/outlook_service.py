@@ -49,6 +49,10 @@ def get_rooms(access_token):
         return "{0}: {1}".format(r.status_code, r.text)
 
 
+def set_room(access_token, room_email):
+    pass
+
+
 def get_me(access_token):
     get_me_url = graph_endpoint.format('/me')
 

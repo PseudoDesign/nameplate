@@ -3,6 +3,33 @@ from django.urls import reverse
 from unittest.mock import patch
 
 
+class TestSetRoom(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_no_room_email_returns_400(self, get_access_token):
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse("set_room"))
+        self.assertEqual(response.status_code, 400)
+
+    @patch("kiosk.outlook_service.set_room")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_invalid_room_email_returns_400(self, get_access_token, set_room):
+        get_access_token.return_value = "12345"
+        set_room.return_value = False
+        response = self.client.get(reverse("set_room") + "?room_email=fake")
+        self.assertEqual(response.status_code, 400)
+
+    @patch("kiosk.outlook_service.set_room")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_valid_room_email_redirects_to_select_room(self, get_access_token, set_room):
+        get_access_token.return_value = "12345"
+        set_room.return_value = True
+        response = self.client.get(reverse("set_room") + "?room_email=fake@room.me")
+        self.assertRedirects(response, reverse('select_room'), fetch_redirect_response=False)
+
+
 class TestSelectRoom(TestCase):
     def setUp(self):
         self.client = Client()

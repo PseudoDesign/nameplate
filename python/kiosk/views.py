@@ -16,6 +16,17 @@ def require_login(view):
 
 
 @require_login
+def set_room(request, access_token):
+    room_email = request.GET.get('room_email')
+    if room_email is None:
+        return HttpResponseBadRequest("Room Email is required.")
+    if kiosk.outlook_service.set_room():
+        return HttpResponseRedirect(reverse("select_room"))
+    else:
+        return HttpResponseBadRequest("Invalid room email")
+
+
+@require_login
 def home(request, access_token):
     return render(request, "kiosk/welcome.html")
 
