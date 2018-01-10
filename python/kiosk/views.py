@@ -14,19 +14,27 @@ def require_login(view):
             return HttpResponseRedirect(reverse('outlook_login'))
     return function_wrapper
 
+
 @require_login
 def home(request, access_token):
     return render(request, "kiosk/welcome.html")
+
 
 @require_login
 def select_room(request, access_token):
     rooms = kiosk.outlook_service.get_rooms(access_token)
     if rooms is None:
         return HttpResponseNotFound("Could not get the list of rooms.")
+    context = {
+        "rooms": rooms
+    }
+    return render(request, "kiosk/select_room.html", context)
+
 
 def outlook_logout(request):
     request.session.clear()
     return HttpResponseRedirect(reverse('outlook_login'))
+
 
 def outlook_login(request):
     redirect_uri = request.build_absolute_uri(reverse('get_token'))
@@ -41,6 +49,7 @@ def outlook_login(request):
     else:
         context['logged_in'] = False
     return render(request, "kiosk/outlook_login.html", context)
+
 
 def get_token(request):
     auth_code = request.GET.get('code')

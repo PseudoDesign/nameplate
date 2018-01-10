@@ -3,6 +3,31 @@ from django.urls import reverse
 from unittest.mock import patch
 
 
+class TestSelectRoom(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    @patch("kiosk.auth_helper.get_access_token")
+    @patch("kiosk.outlook_service.get_rooms")
+    def test_returns_404_when_rooms_is_none(self, get_rooms, get_access_token):
+        get_rooms.return_value = None
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse("select_room"))
+        self.assertEqual(response.status_code, 404)
+
+    @patch("kiosk.auth_helper.get_access_token")
+    @patch("kiosk.outlook_service.get_rooms")
+    def test_rooms_passed_to_template(self, get_rooms, get_access_token):
+        get_rooms.return_value = [
+            {
+                "name": "Test Room",
+                "email": "test@room.mail"
+            }
+        ]
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse("select_room"))
+        self.assertEqual(response.context["rooms"], get_rooms.return_value)
+
 
 class TestGetToken(TestCase):
     def setUp(self):
