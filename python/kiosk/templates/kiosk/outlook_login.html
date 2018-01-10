@@ -1,9 +1,15 @@
 {% extends "kiosk/layout.html" %}
 {% block content %}
-<div class="jumbotron">
-  <h1>Python Outlook Sample</h1>
-  <p>
-    <a class="btn btn-lg btn-primary" href="{{ signin_url }}" role="button" id="connect-button">Connect to Outlook</a>
-  </p>
-</div>
+    <div class="jumbotron">
+        <h1>Python Outlook Sample</h1>
+
+        {% if logged_in %}
+            Logged in
+        {% else %}
+            Not logged in
+        {% endif %}
+        <p>
+            <a class="btn btn-lg btn-primary" href="{{ signin_url }}" role="button" id="connect-button">Connect to Outlook</a>
+        </p>
+    </div>
 {% endblock %}
