@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound
 import kiosk.auth_helper
 import kiosk.outlook_service
-import time
 
 
 def require_login(view):
@@ -18,6 +17,12 @@ def require_login(view):
 @require_login
 def home(request, access_token):
     return render(request, "kiosk/welcome.html")
+
+@require_login
+def select_room(request, access_token):
+    rooms = kiosk.outlook_service.get_rooms(access_token)
+    if rooms is None:
+        return HttpResponseNotFound("Could not get the list of rooms.")
 
 def outlook_logout(request):
     request.session.clear()
@@ -39,7 +44,7 @@ def outlook_login(request):
 
 def get_token(request):
     auth_code = request.GET.get('code')
-
+    # TODO: clear session here?
     if kiosk.auth_helper.process_auth_code(request, auth_code, request.build_absolute_uri(reverse('get_token'))):
         return HttpResponseRedirect(reverse('home'))
     else:

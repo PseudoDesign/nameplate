@@ -2,7 +2,7 @@ import requests
 import uuid
 import json
 
-graph_endpoint = 'https://graph.microsoft.com/v1.0{0}'
+graph_endpoint = 'https://graph.microsoft.com/beta{0}'
 
 
 # Generic API Sending
@@ -36,6 +36,17 @@ def make_api_call(method, url, token, user_email, payload = None, parameters = N
         response = requests.post(url, headers = headers, data = json.dumps(payload), params = parameters)
 
     return response
+
+
+def get_rooms(access_token):
+    get_rooms_url = graph_endpoint.format("/me/findRooms")
+
+    r = make_api_call('GET', get_rooms_url, access_token, "")
+
+    if r.status_code == requests.codes.ok:
+        return r.json()['value']
+    else:
+        return "{0}: {1}".format(r.status_code, r.text)
 
 
 def get_me(access_token):

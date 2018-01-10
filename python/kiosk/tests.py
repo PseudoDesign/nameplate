@@ -3,6 +3,7 @@ from django.urls import reverse
 from unittest.mock import patch
 
 
+
 class TestGetToken(TestCase):
     def setUp(self):
         self.client = Client()
