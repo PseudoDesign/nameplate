@@ -3,5 +3,9 @@
     <div class="jumbotron">
         <h1>Select Room Sample</h1>
 
+        {% for room in rooms %}
+            {{ room.name }}<br>
+        {% endfor %}
+
     </div>
 {% endblock %}
