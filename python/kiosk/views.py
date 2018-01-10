@@ -16,7 +16,7 @@ def require_login(view):
     return function_wrapper
 
 @require_login
-def home(request, token):
+def home(request, access_token):
     return render(request, "kiosk/welcome.html")
 
 def outlook_logout(request):
@@ -39,26 +39,8 @@ def outlook_login(request):
 
 def get_token(request):
     auth_code = request.GET.get('code')
-    redirect_uri = request.build_absolute_uri(reverse('get_token'))
-    token = kiosk.auth_helper.get_token_from_code(auth_code, redirect_uri)
-    access_token = token.get('access_token')
 
-    if access_token is None:
+    if kiosk.auth_helper.process_auth_code(request, auth_code, request.build_absolute_uri(reverse('get_token'))):
+        return HttpResponseRedirect(reverse('home'))
+    else:
         return HttpResponseBadRequest("Code did not generate a valid access token.")
-
-    user = kiosk.outlook_service.get_me(access_token)
-    refresh_token = token['refresh_token']
-    expires_in = token['expires_in']
-
-    # expires_in is in seconds
-    # Get current timestamp (seconds since Unix Epoch) and
-    # add expires_in to get expiration time
-    # Subtract 5 minutes to allow for clock differences
-    expiration = int(time.time()) + expires_in - 300
-
-    # Save the token in the session
-    request.session['access_token'] = access_token
-    request.session['refresh_token'] = refresh_token
-    request.session['token_expires'] = expiration
-    request.session['user_email'] = user['mail']
-    return HttpResponseRedirect(request.build_absolute_uri(reverse('home')))

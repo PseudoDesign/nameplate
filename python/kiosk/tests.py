@@ -15,6 +15,12 @@ class TestGetToken(TestCase):
         response = self.client.get(reverse("get_token"))
         self.assertEqual(response.status_code, 400)
 
+    @patch("kiosk.auth_helper.process_auth_code")
+    def test_valid_auth_code_redirects_to_home(self, process_auth_code):
+        process_auth_code.return_value = True
+        response = self.client.get(reverse("get_token"))
+        self.assertRedirects(response, reverse("home"), fetch_redirect_response=False)
+
 
 class TestHomeView(TestCase):
     def setUp(self):

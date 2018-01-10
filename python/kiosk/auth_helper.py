@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 from .appkeys import ExchangeAuthKeys
+from .outlook_service import get_me
 import requests
 import time
 
@@ -71,6 +72,30 @@ def get_token_from_refresh_token(refresh_token, redirect_uri):
     except:
         return 'Error retrieving token: {0} - {1}'.format(r.status_code, r.text)
 
+
+def process_auth_code(request, auth_code, redirect_uri):
+    token = get_token_from_code(auth_code, redirect_uri)
+    access_token = token.get('access_token')
+
+    if access_token is None:
+        return False
+
+    user = get_me(access_token)
+    refresh_token = token['refresh_token']
+    expires_in = token['expires_in']
+
+    # expires_in is in seconds
+    # Get current timestamp (seconds since Unix Epoch) and
+    # add expires_in to get expiration time
+    # Subtract 5 minutes to allow for clock differences
+    expiration = int(time.time()) + expires_in - 300
+
+    # Save the token in the session
+    request.session['access_token'] = access_token
+    request.session['refresh_token'] = refresh_token
+    request.session['token_expires'] = expiration
+    request.session['user_email'] = user['mail']
+    return True
 
 def get_access_token(request, redirect_uri):
     current_token = request.session.get('access_token')
