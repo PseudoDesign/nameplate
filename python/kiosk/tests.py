@@ -2,12 +2,12 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from unittest.mock import patch
 
+
 class TestHomeView(TestCase):
     def setUp(self):
         self.client = Client()
 
     def test_redirect_to_login_page_when_no_access_token_is_present(self):
-        self.client.session['access_token'] = None
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('outlook_login'))
 
