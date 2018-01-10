@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseBadRequest
 import kiosk.auth_helper
 import kiosk.outlook_service
 import time
@@ -20,7 +20,8 @@ def home(request, token):
     return render(request, "kiosk/welcome.html")
 
 def outlook_logout(request):
-    return render(request, "kiosk/welcome.html")
+    request.session.clear()
+    return HttpResponseRedirect(reverse('outlook_login'))
 
 def outlook_login(request):
     redirect_uri = request.build_absolute_uri(reverse('get_token'))
@@ -37,10 +38,14 @@ def outlook_login(request):
     return render(request, "kiosk/outlook_login.html", context)
 
 def get_token(request):
-    auth_code = request.GET['code']
+    auth_code = request.GET.get('code')
     redirect_uri = request.build_absolute_uri(reverse('get_token'))
     token = kiosk.auth_helper.get_token_from_code(auth_code, redirect_uri)
-    access_token = token['access_token']
+    access_token = token.get('access_token')
+
+    if access_token is None:
+        return HttpResponseBadRequest("Code did not generate a valid access token.")
+
     user = kiosk.outlook_service.get_me(access_token)
     refresh_token = token['refresh_token']
     expires_in = token['expires_in']

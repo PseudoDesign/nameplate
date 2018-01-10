@@ -3,12 +3,40 @@ from django.urls import reverse
 from unittest.mock import patch
 
 
+class TestGetToken(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_invalid_auth_code_fails_with_400(self):
+        response = self.client.get(reverse("get_token") + "?code=fake")
+        self.assertEqual(response.status_code, 400)
+
+    def test_no_auth_code_fails_with_400(self):
+        response = self.client.get(reverse("get_token"))
+        self.assertEqual(response.status_code, 400)
+
+
 class TestHomeView(TestCase):
     def setUp(self):
         self.client = Client()
 
     def test_redirect_to_login_page_when_no_access_token_is_present(self):
+        self.client.session['access_token'] = None
         response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('outlook_login'))
+
+
+class TestLogoutView(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_clears_session_cookies(self):
+        self.client.session["test_clear"] = False
+        self.client.get(reverse('outlook_logout'))
+        self.assertFalse("test_clear" in self.client.session)
+
+    def test_redirects_to_login(self):
+        response = self.client.get(reverse('outlook_logout'))
         self.assertRedirects(response, reverse('outlook_login'))
 
 

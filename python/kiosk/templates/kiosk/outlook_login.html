@@ -4,9 +4,10 @@
         <h1>Python Outlook Sample</h1>
 
         {% if logged_in %}
-            Logged in
+            Logged in as: {{ user_email }} <br>
+            <a class="btn btn-lg btn-primary" href="{{ logout_link }}" role="button" id="connect-button">Logout</a>
         {% else %}
-            Not logged in
+            Not logged in.
         {% endif %}
         <p>
             <a class="btn btn-lg btn-primary" href="{{ signin_url }}" role="button" id="connect-button">Connect to Outlook</a>
