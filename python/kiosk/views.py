@@ -19,6 +19,9 @@ def require_login(view):
 def home(request, token):
     return render(request, "kiosk/welcome.html")
 
+def outlook_logout(request):
+    return render(request, "kiosk/welcome.html")
+
 def outlook_login(request):
     redirect_uri = request.build_absolute_uri(reverse('get_token'))
     signin_url = get_signin_url(redirect_uri)

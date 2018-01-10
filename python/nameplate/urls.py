@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from kiosk.views import outlook_login, get_token, home
+from kiosk.views import outlook_login, get_token, home, outlook_logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'login/', outlook_login, name='outlook_login'),
+    path(r'logout/', outlook_logout, name='outlook_logout'),
     path(r'get_token/', get_token, name='get_token'),
     path(r'', home, name='home')
 ]
