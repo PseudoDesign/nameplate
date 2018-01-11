@@ -22,7 +22,7 @@ def room_info(request, access_token):
         return HttpResponseBadRequest("room_email is required.")
     info = kiosk.outlook_service.get_room_info(access_token, room_email)
     if info is not None:
-        return JsonResponse({'value': info})
+        return JsonResponse(info)
     else:
         return HttpResponseBadRequest("Invalid room_email")
 

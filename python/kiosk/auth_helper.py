@@ -23,7 +23,10 @@ scopes = [ 'openid',
            'User.Read.All',
            'offline_access',
            "Calendars.Read",
-           "Calendars.ReadWrite" ]
+           "Calendars.ReadWrite",
+           "Calendars.Read.Shared",
+           "Calendars.ReadWrite.Shared"
+           ]
 
 def get_signin_url(redirect_uri):
     # Build the query parameters for the signin url

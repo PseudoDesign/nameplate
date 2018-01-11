@@ -1,6 +1,7 @@
 import requests
 import uuid
 import json
+from datetime import datetime, timedelta
 
 graph_endpoint = 'https://graph.microsoft.com/beta{0}'
 
@@ -53,15 +54,74 @@ def set_room(access_token, room_email):
     pass
 
 
-def get_room_info(access_token, room_email):
-    get_info_url = graph_endpoint.format("/users/{0}".format(room_email))
+def get_url(access_token, url):
+    get_user_url = graph_endpoint.format(url)
 
-    r = make_api_call('GET', get_info_url, access_token, "")
+    r = make_api_call('GET', get_user_url, access_token, "")
 
     if r.status_code == requests.codes.ok:
-        return r.json()['value']
+        return r.json()
     else:
-        return "{0}: {1}".format(r.status_code, r.text)
+        return None
+
+
+def get_user(access_token, room_email):
+    return get_url(access_token, "/users/{0}".format(room_email))
+
+
+def post_request_url(access_token, url, data):
+    r = make_api_call('POST', graph_endpoint.format(url), access_token, "", payload=data)
+
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+def find_meeting_times(access_token, user_email):
+    # This needs to be a POST request, see https://developer.microsoft.com/en-us/graph/docs/api-reference/beta/api/user_findmeetingtimes
+    url = "/me/findMeetingTimes"
+    data = {
+        "attendees": [
+            {
+                "type": "required",
+                "emailAddress": {
+                    "address": user_email
+                }
+            }
+        ],
+        "timeConstraint": {
+            "activityDomain": "unrestricted",
+            "timeslots": [
+                {
+                    "start": {
+                        "dateTime": "2018-01-12T09:00:00",
+                        "timeZone": "Pacific Standard Time"
+                    },
+                    "end": {
+                        "dateTime": "2018-01-12T11:00:00",
+                        "timeZone": "Pacific Standard Time"
+                    }
+                }
+            ]
+        },
+        "meetingDuration": "PT2H",
+        "returnSuggestionReasons": "true",
+        "minimumAttendeePercentage": "100"
+    }
+    response = post_request_url(access_token, url, data)
+    return response
+
+
+def get_room_info(access_token, room_email):
+    room_user = get_user(access_token, room_email)
+    return find_meeting_times(access_token, room_email)
+    if room_user:
+        return {
+            'name': room_user['displayName'],
+            'email': room_email,
+
+        }
+    return None
 
 
 def get_me(access_token):
