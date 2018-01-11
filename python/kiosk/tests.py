@@ -1,6 +1,55 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from unittest.mock import patch
+from datetime import timedelta, datetime
+
+
+class TestGetRoomInfo(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_no_room_email_returns_400(self, get_access_token):
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse("room_info"))
+        self.assertEqual(response.status_code, 400)
+
+    @patch("kiosk.outlook_service.get_room_info")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_invalid_room_email_returns_400(self, get_access_token, get_room_info):
+        get_access_token.return_value = "12345"
+        get_room_info.return_value = None
+        response = self.client.get(reverse("room_info"))
+        self.assertEqual(response.status_code, 400)
+
+    @patch("kiosk.outlook_service.get_room_info")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_valid_room_returns_json_info(self, get_access_token, get_room_info):
+        get_access_token.return_value = "12345"
+        start_time = datetime.now() - timedelta(minutes=10)
+        end_time = datetime.now() + timedelta(minutes=10)
+        get_room_info.return_value = {
+            'name': "Test Room",
+            'email': "test@room.com",
+            'current_meeting': {
+                'organizer': {
+                    'name': "John Doe",
+                    'email': "jdoe@test.com"
+                },
+                'start_time': start_time,
+                'end_time': end_time
+            },
+            'next_meeting': {
+                'organizer': {
+                    'name': "John Doe",
+                    'email': "jdoe@test.com"
+                },
+                'start_time': start_time + timedelta(days=1),
+                'end_time': end_time + timedelta(days=1)
+            }
+        }
+        response = self.client.get(reverse('room_info') + "?room_email=1@2.co")
+        self.assertEqual(response.status_code, 200)
 
 
 class TestSetRoom(TestCase):
