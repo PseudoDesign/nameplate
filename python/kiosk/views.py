@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 import kiosk.auth_helper
 import kiosk.outlook_service
 
@@ -16,11 +16,23 @@ def require_login(view):
 
 
 @require_login
+def room_info(request, access_token):
+    room_email = request.GET.get('room_email')
+    if room_email is None:
+        return HttpResponseBadRequest("Room Email is required.")
+    info = kiosk.outlook_service.get_room_info(access_token, room_email)
+    if info:
+        return JsonResponse(info)
+    else:
+        return HttpResponseBadRequest("Invalid room email")
+
+
+@require_login
 def set_room(request, access_token):
     room_email = request.GET.get('room_email')
     if room_email is None:
         return HttpResponseBadRequest("Room Email is required.")
-    if kiosk.outlook_service.set_room():
+    if kiosk.outlook_service.set_room(access_token, room_email):
         return HttpResponseRedirect(reverse("select_room"))
     else:
         return HttpResponseBadRequest("Invalid room email")

@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from unittest.mock import patch
 from datetime import timedelta, datetime
+import json
 
 
 class TestGetRoomInfo(TestCase):
@@ -19,7 +20,7 @@ class TestGetRoomInfo(TestCase):
     def test_invalid_room_email_returns_400(self, get_access_token, get_room_info):
         get_access_token.return_value = "12345"
         get_room_info.return_value = None
-        response = self.client.get(reverse("room_info"))
+        response = self.client.get(reverse("room_info") + "?room_email=111")
         self.assertEqual(response.status_code, 400)
 
     @patch("kiosk.outlook_service.get_room_info")
@@ -50,6 +51,9 @@ class TestGetRoomInfo(TestCase):
         }
         response = self.client.get(reverse('room_info') + "?room_email=1@2.co")
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(get_room_info.return_value['email'], data['email'])
+        self.assertEqual(get_room_info.return_value['name'], data['name'])
 
 
 class TestSetRoom(TestCase):
