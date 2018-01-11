@@ -19,23 +19,23 @@ def require_login(view):
 def room_info(request, access_token):
     room_email = request.GET.get('room_email')
     if room_email is None:
-        return HttpResponseBadRequest("Room Email is required.")
+        return HttpResponseBadRequest("room_email is required.")
     info = kiosk.outlook_service.get_room_info(access_token, room_email)
-    if info:
-        return JsonResponse(info)
+    if info is not None:
+        return JsonResponse({'value': info})
     else:
-        return HttpResponseBadRequest("Invalid room email")
+        return HttpResponseBadRequest("Invalid room_email")
 
 
 @require_login
 def set_room(request, access_token):
     room_email = request.GET.get('room_email')
     if room_email is None:
-        return HttpResponseBadRequest("Room Email is required.")
+        return HttpResponseBadRequest("room_email is required.")
     if kiosk.outlook_service.set_room(access_token, room_email):
         return HttpResponseRedirect(reverse("select_room"))
     else:
-        return HttpResponseBadRequest("Invalid room email")
+        return HttpResponseBadRequest("Invalid room_email")
 
 
 @require_login

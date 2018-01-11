@@ -54,7 +54,14 @@ def set_room(access_token, room_email):
 
 
 def get_room_info(access_token, room_email):
-    pass
+    get_info_url = graph_endpoint.format("/users/{0}".format(room_email))
+
+    r = make_api_call('GET', get_info_url, access_token, "")
+
+    if r.status_code == requests.codes.ok:
+        return r.json()['value']
+    else:
+        return "{0}: {1}".format(r.status_code, r.text)
 
 
 def get_me(access_token):
