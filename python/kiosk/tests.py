@@ -51,7 +51,7 @@ class TestGetRoomInfo(TestCase):
         }
         response = self.client.get(reverse('room_info') + "?room_email=1@2.co")
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)['value']
+        data = json.loads(response.content)
         self.assertEqual(get_room_info.return_value['email'], data['email'])
         self.assertEqual(get_room_info.return_value['name'], data['name'])
 
