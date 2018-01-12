@@ -58,11 +58,9 @@ class TestGetRoomInfo(TestCase):
         response = self.client.get(reverse("room_info"))
         self.assertEqual(response.status_code, 400)
 
-    @patch("kiosk.outlook_service.get_room_info")
     @patch("kiosk.auth_helper.get_access_token")
-    def test_invalid_room_email_returns_400(self, get_access_token, get_room_info):
+    def test_invalid_room_email_returns_400(self, get_access_token):
         get_access_token.return_value = "12345"
-        get_room_info.return_value = None
         response = self.client.get(reverse("room_info") + "?room_email=111")
         self.assertEqual(response.status_code, 400)
 
