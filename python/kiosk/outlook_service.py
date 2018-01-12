@@ -82,6 +82,7 @@ def post_request_url(access_token, url, data):
 def datetime_to_string(dt):
     return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
+
 def find_meeting_times(access_token, user_email, start_time, duration_minutes):
     url = "/me/findMeetingTimes"
     end_time = start_time + timedelta(minutes=duration_minutes, seconds=1)
@@ -100,11 +101,11 @@ def find_meeting_times(access_token, user_email, start_time, duration_minutes):
                 {
                     "start": {
                         "dateTime": datetime_to_string(start_time),
-                        "timeZone": "Mountain Standard Time"
+                        "timeZone": "UTC"
                     },
                     "end": {
                         "dateTime": datetime_to_string(end_time),
-                        "timeZone": "Mountain Standard Time"
+                        "timeZone": "UTC"
                     }
                 }
             ]

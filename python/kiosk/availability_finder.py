@@ -2,19 +2,20 @@ from datetime import timedelta, datetime
 import kiosk.outlook_service
 
 
-def get_quarter_hour_floor(time):
+def get_half_hour_floor(time):
     """
     Rounds down time to the nearest hour
     :param time: a datetime object
     :return: a datetime object
     """
-    return time - timedelta(minutes=time.minute % 15, seconds=time.second, microseconds=time.microsecond)
+    retval = time - timedelta(minutes=time.minute % 30, seconds=time.second, microseconds=time.microsecond)
+    return retval
 
 
 def get_availability(auth_token, email, start_time):
     """
     Determine if a room if available for various durations.  Note that all time offsets are relative
-    to the quarter hour floor.
+    to the half hour floor.
     :param auth_token:
     :param email:
     :param start_time:
@@ -28,10 +29,9 @@ def get_availability(auth_token, email, start_time):
     availability = {
         15: None,
         30: None,
-        45: None,
         60: None
     }
-    start_floor = get_quarter_hour_floor(start_time)
+    start_floor = get_half_hour_floor(start_time)
     for duration in availability:
         r = kiosk.outlook_service.find_meeting_times(auth_token, email, start_floor, duration)
         if r is None:
