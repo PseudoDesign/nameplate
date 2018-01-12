@@ -27,9 +27,9 @@ class TestAvailabilityFinder(TestCase):
         now = datetime.now()
         expected_response = {
             'start_time': af.get_half_hour_floor(now),
-            15: True,
             30: True,
-            60: True
+            60: True,
+            90: True
         }
         find_meeting_times.return_value = {'meetingTimeSuggestions': ['some_meeting']}
         availability = af.get_availability("12345", "1@2.com", now)
@@ -40,9 +40,9 @@ class TestAvailabilityFinder(TestCase):
         now = datetime.now()
         expected_response = {
             'start_time': af.get_half_hour_floor(now),
-            15: False,
             30: False,
-            60: False
+            60: False,
+            90: False
         }
         find_meeting_times.return_value = {'meetingTimeSuggestions': []}
         availability = af.get_availability("12345", "1@2.com", now)
@@ -66,37 +66,23 @@ class TestGetRoomInfo(TestCase):
         response = self.client.get(reverse("room_info") + "?room_email=111")
         self.assertEqual(response.status_code, 400)
 
-    @patch("kiosk.outlook_service.get_room_info")
+    @patch("kiosk.outlook_service.get_user")
+    @patch("kiosk.availability_finder.get_availability")
     @patch("kiosk.auth_helper.get_access_token")
-    def test_valid_room_returns_json_info(self, get_access_token, get_room_info):
+    def test_valid_room_returns_json_info(self, get_access_token, get_availability, get_user):
+        get_user.return_value = {"displayName": "Test Name"}
         get_access_token.return_value = "12345"
-        start_time = datetime.now() - timedelta(minutes=10)
-        end_time = datetime.now() + timedelta(minutes=10)
-        get_room_info.return_value = {
-            'name': "Test Room",
-            'email': "test@room.com",
-            'current_meeting': {
-                'organizer': {
-                    'name': "John Doe",
-                    'email': "jdoe@test.com"
-                },
-                'start_time': start_time,
-                'end_time': end_time
-            },
-            'next_meeting': {
-                'organizer': {
-                    'name': "John Doe",
-                    'email': "jdoe@test.com"
-                },
-                'start_time': start_time + timedelta(days=1),
-                'end_time': end_time + timedelta(days=1)
-            }
+        get_availability.return_value = {
+            'start_time': af.get_half_hour_floor(datetime.now()),
+            30: True,
+            60: True,
+            90: True
         }
         response = self.client.get(reverse('room_info') + "?room_email=1@2.co")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(get_room_info.return_value['email'], data['email'])
-        self.assertEqual(get_room_info.return_value['name'], data['name'])
+        self.assertEqual(get_availability.return_value[30], data['availability']['30'])
+        self.assertEqual("Test Name", data['name'])
 
 
 class TestSetRoom(TestCase):

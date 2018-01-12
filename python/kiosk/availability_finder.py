@@ -8,8 +8,7 @@ def get_half_hour_floor(time):
     :param time: a datetime object
     :return: a datetime object
     """
-    retval = time - timedelta(minutes=time.minute % 30, seconds=time.second, microseconds=time.microsecond)
-    return retval
+    return time - timedelta(minutes=time.minute % 30, seconds=time.second, microseconds=time.microsecond)
 
 
 def get_availability(auth_token, email, start_time):
@@ -19,17 +18,19 @@ def get_availability(auth_token, email, start_time):
     :param auth_token:
     :param email:
     :param start_time:
-    :return: A dictionary showing the availability for 15, 30, and 60 minutes from 'start_time'.  example:
+    :return: A dictionary showing the availability for 30, 60, and 90 minutes from 'start_time's half hour floor.
+    example:
     {
-        15: True,
-        30: False,
-        60: False
+        'start_time': datetime(2018, 1, 15, 6, 30)
+        30: True,
+        60: False,
+        90: False
     }
     """
     availability = {
-        15: None,
         30: None,
-        60: None
+        60: None,
+        90: None
     }
     start_floor = get_half_hour_floor(start_time)
     for duration in availability:

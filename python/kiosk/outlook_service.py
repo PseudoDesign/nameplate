@@ -78,7 +78,6 @@ def post_request_url(access_token, url, data):
         return None
 
 
-
 def datetime_to_string(dt):
     return dt.strftime("%Y-%m-%dT%H:%M:%S")
 

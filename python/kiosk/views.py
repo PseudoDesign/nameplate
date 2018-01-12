@@ -22,9 +22,14 @@ def room_info(request, access_token):
     room_email = request.GET.get('room_email')
     if room_email is None:
         return HttpResponseBadRequest("room_email is required.")
-    info = kiosk.availability_finder.get_availability(access_token, room_email, datetime.now())
-    if info is not None:
-        return JsonResponse(info)
+    availability = kiosk.availability_finder.get_availability(access_token, room_email, datetime.now())
+    user = kiosk.outlook_service.get_user(access_token, room_email)
+    if availability is not None and user is not None:
+        return JsonResponse({
+            "name": user['displayName'],
+            "email": room_email,
+            "availability": availability
+        })
     else:
         return HttpResponseBadRequest("Invalid room_email")
 
