@@ -3,7 +3,38 @@ from django.urls import reverse
 from unittest.mock import patch
 from datetime import timedelta, datetime
 import json
+from kiosk import availability_finder as af
 
+
+class TestAvailabilityFinder(TestCase):
+    def test_get_quarter_hour_floor(self):
+        test_cases = [
+            {
+                'input': datetime(2018, 1, 11, 5, 33, 21),
+                'output': datetime(2018, 1, 11, 5, 30, 00)
+            },
+            {
+                'input': datetime(2013, 1, 11, 15, 00, 00),
+                'output': datetime(2013, 1, 11, 15, 00, 00)
+            }
+        ]
+        for c in test_cases:
+            self.assertEqual(af.get_quarter_hour_floor(c['input']), c['output'])
+
+
+    @patch("kiosk.outlook_service.find_meeting_times")
+    def test_full_availability(self, find_meeting_times):
+        now = datetime.now()
+        expected_response = {
+            'start_time': af.get_quarter_hour_floor(now),
+            15: True,
+            30: True,
+            45: True,
+            60: True
+        }
+        find_meeting_times.return_value = {'meetingTimeSuggestions': ['some_meeting']}
+        availability = af.get_availability("12345", "1@2.com", now)
+        self.assertEqual(expected_response, availability)
 
 class TestGetRoomInfo(TestCase):
     def setUp(self):

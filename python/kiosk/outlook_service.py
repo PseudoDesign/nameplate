@@ -78,12 +78,14 @@ def post_request_url(access_token, url, data):
         return None
 
 
+
 def datetime_to_string(dt):
-    return dt.strftime("%Y-%m-%DT%H:%M:%S")
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 def find_meeting_times(access_token, user_email, start_time, duration_minutes):
     url = "/me/findMeetingTimes"
-    end_time = start_time + timedelta(minutes=duration_minutes)
+    start_time += timedelta(seconds=15)
+    end_time = start_time + timedelta(minutes=duration_minutes, seconds=1)
     data = {
         "attendees": [
             {
@@ -98,31 +100,26 @@ def find_meeting_times(access_token, user_email, start_time, duration_minutes):
             "timeslots": [
                 {
                     "start": {
-                        "dateTime": "2018-01-12T09:00:00",
-                        "timeZone": "Pacific Standard Time"
+                        "dateTime": '2018-01-12T01:33:52',
+                        "timeZone": "Mountain Standard Time"
                     },
                     "end": {
-                        "dateTime": "2018-01-12T11:00:00",
-                        "timeZone": "Pacific Standard Time"
+                        "dateTime": '2018-01-12T02:06:52',
+                        "timeZone": "Mountain Standard Time"
                     }
                 }
             ]
         },
-        "meetingDuration": "PT2H",
-        "returnSuggestionReasons": "true",
+        "meetingDuration": "PT{0}M".format(duration_minutes),
         "minimumAttendeePercentage": "100"
     }
     response = post_request_url(access_token, url, data)
     return response
 
 
-def check_availability(access_token, email, start_time, end_time):
-    pass
-
-
 def get_room_info(access_token, room_email):
     room_user = get_user(access_token, room_email)
-    return find_meeting_times(access_token, room_email)
+    return find_meeting_times(access_token, room_email, datetime.now(), 15)
     if room_user:
         return {
             'name': room_user['displayName'],
