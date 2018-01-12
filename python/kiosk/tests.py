@@ -35,6 +35,7 @@ class TestAvailabilityFinder(TestCase):
         availability = af.get_availability("12345", "1@2.com", now)
         self.assertEqual(expected_response, availability)
 
+
     @patch("kiosk.outlook_service.find_meeting_times")
     def test_no_availability(self, find_meeting_times):
         now = datetime.now()
@@ -164,6 +165,12 @@ class TestHomeView(TestCase):
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('outlook_login'))
 
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_redirect_to_select_room_when_room_is_not_set(self, get_access_token):
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('select_room'))
+
 
 class TestLogoutView(TestCase):
     def setUp(self):
@@ -177,7 +184,6 @@ class TestLogoutView(TestCase):
     def test_redirects_to_login(self):
         response = self.client.get(reverse('outlook_logout'))
         self.assertRedirects(response, reverse('outlook_login'))
-
 
 class TestLoginPage(TestCase):
     def setUp(self):

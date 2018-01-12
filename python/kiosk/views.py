@@ -27,7 +27,6 @@ def room_info(request, access_token):
     if availability is not None and user is not None:
         return JsonResponse({
             "name": user['displayName'],
-            "email": room_email,
             "availability": availability
         })
     else:
