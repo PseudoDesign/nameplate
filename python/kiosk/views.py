@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 import kiosk.auth_helper
 import kiosk.outlook_service
+import kiosk.availability_finder
+from datetime import datetime
 
 
 def require_login(view):
@@ -20,7 +22,7 @@ def room_info(request, access_token):
     room_email = request.GET.get('room_email')
     if room_email is None:
         return HttpResponseBadRequest("room_email is required.")
-    info = kiosk.outlook_service.get_room_info(access_token, room_email)
+    info = kiosk.availability_finder.get_availability(access_token, room_email, datetime.now())
     if info is not None:
         return JsonResponse(info)
     else:

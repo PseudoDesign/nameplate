@@ -36,6 +36,20 @@ class TestAvailabilityFinder(TestCase):
         availability = af.get_availability("12345", "1@2.com", now)
         self.assertEqual(expected_response, availability)
 
+    @patch("kiosk.outlook_service.find_meeting_times")
+    def test_no_availability(self, find_meeting_times):
+        now = datetime.now()
+        expected_response = {
+            'start_time': af.get_quarter_hour_floor(now),
+            15: False,
+            30: False,
+            45: False,
+            60: False
+        }
+        find_meeting_times.return_value = {'meetingTimeSuggestions': []}
+        availability = af.get_availability("12345", "1@2.com", now)
+        self.assertEqual(expected_response, availability)
+
 class TestGetRoomInfo(TestCase):
     def setUp(self):
         self.client = Client()

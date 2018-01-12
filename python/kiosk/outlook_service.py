@@ -84,7 +84,6 @@ def datetime_to_string(dt):
 
 def find_meeting_times(access_token, user_email, start_time, duration_minutes):
     url = "/me/findMeetingTimes"
-    start_time += timedelta(seconds=15)
     end_time = start_time + timedelta(minutes=duration_minutes, seconds=1)
     data = {
         "attendees": [
@@ -100,11 +99,11 @@ def find_meeting_times(access_token, user_email, start_time, duration_minutes):
             "timeslots": [
                 {
                     "start": {
-                        "dateTime": '2018-01-12T01:33:52',
+                        "dateTime": datetime_to_string(start_time),
                         "timeZone": "Mountain Standard Time"
                     },
                     "end": {
-                        "dateTime": '2018-01-12T02:06:52',
+                        "dateTime": datetime_to_string(end_time),
                         "timeZone": "Mountain Standard Time"
                     }
                 }
