@@ -77,9 +77,13 @@ def post_request_url(access_token, url, data):
     else:
         return None
 
-def find_meeting_times(access_token, user_email):
-    # This needs to be a POST request, see https://developer.microsoft.com/en-us/graph/docs/api-reference/beta/api/user_findmeetingtimes
+
+def datetime_to_string(dt):
+    return dt.strftime("%Y-%m-%DT%H:%M:%S")
+
+def find_meeting_times(access_token, user_email, start_time, duration_minutes):
     url = "/me/findMeetingTimes"
+    end_time = start_time + timedelta(minutes=duration_minutes)
     data = {
         "attendees": [
             {
@@ -110,6 +114,10 @@ def find_meeting_times(access_token, user_email):
     }
     response = post_request_url(access_token, url, data)
     return response
+
+
+def check_availability(access_token, email, start_time, end_time):
+    pass
 
 
 def get_room_info(access_token, room_email):
