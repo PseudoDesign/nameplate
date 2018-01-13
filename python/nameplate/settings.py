@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'kiosk',
+    'django_jasmine'
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,5 @@ USE_TZ = True
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'kiosk/templates'),)
 STATIC_URL = '/static/'
+
+JASMINE_TEST_DIRECTORY = os.path.join(BASE_DIR, "static/nameplate/js")

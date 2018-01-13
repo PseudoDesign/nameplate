@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from kiosk.views import outlook_login, get_token, home, outlook_logout, select_room, set_room, room_info
 
@@ -26,5 +26,6 @@ urlpatterns = [
     path(r'select_room/', select_room, name='select_room'),
     path(r'set_room', set_room, name='set_room'),
     path(r'room_info', room_info, name='room_info'),
+    path(r'jasmine/', include('django_jasmine.urls')),
     path(r'', home, name='home')
 ]
