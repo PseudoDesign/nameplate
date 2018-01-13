@@ -50,8 +50,12 @@ def get_rooms(access_token):
         return "{0}: {1}".format(r.status_code, r.text)
 
 
-def set_room(access_token, room_email):
-    pass
+def set_room(session, access_token, room_email):
+    user = get_user(access_token, room_email)
+    if user:
+        session['room_email'] = room_email
+        return True
+    return False
 
 
 def get_url(access_token, url):
