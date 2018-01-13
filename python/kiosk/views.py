@@ -50,9 +50,14 @@ def home(request, access_token):
     user = None
     if room_email:
         user = kiosk.outlook_service.get_user(access_token, room_email)
-    if not user:
+        display_name = user.get('displayName')
+    if not user or not display_name:
         return HttpResponseRedirect(reverse("select_room"))
-    return render(request, "kiosk/welcome.html")
+    context = {
+        'display_name': display_name,
+        'room_email': room_email
+    }
+    return render(request, "kiosk/welcome.html", context)
 
 
 @require_login
