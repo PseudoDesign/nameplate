@@ -171,6 +171,15 @@ class TestHomeView(TestCase):
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('select_room'))
 
+    @patch("kiosk.outlook_service.get_user")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_redirect_to_select_room_when_room_is_invalid(self, get_access_token, get_user):
+        get_user.return_value = None
+        get_access_token.return_value = "12345"
+        self.client.session['room_email'] = "1@2.com"
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('select_room'))
+
 
 class TestLogoutView(TestCase):
     def setUp(self):

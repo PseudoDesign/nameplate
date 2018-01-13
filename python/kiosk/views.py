@@ -46,6 +46,12 @@ def set_room(request, access_token):
 
 @require_login
 def home(request, access_token):
+    room_email = request.session.get('room_email')
+    user = None
+    if room_email:
+        user = kiosk.outlook_service.get_user(access_token, room_email)
+    if not user:
+        return HttpResponseRedirect(reverse("select_room"))
     return render(request, "kiosk/welcome.html")
 
 
