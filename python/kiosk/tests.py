@@ -4,6 +4,7 @@ from unittest.mock import patch
 from datetime import timedelta, datetime
 import json
 from kiosk import availability_finder as af
+from kiosk.outlook_service import datetime_to_string
 
 
 class TestAvailabilityFinder(TestCase):
@@ -33,10 +34,10 @@ class TestAvailabilityFinder(TestCase):
             90: True
         }
         find_meeting_times.return_value = {'meetingTimeSuggestions': [
-            {'meetingTimeSlot': {'start': now_floor + timedelta(minutes=0)}},
-            {'meetingTimeSlot': {'start': now_floor + timedelta(minutes=30)}},
-            {'meetingTimeSlot': {'start': now_floor + timedelta(minutes=60)}},
-            {'meetingTimeSlot': {'start': now_floor + timedelta(minutes=90)}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=0))}}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=30)) + ".00"}}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=60))}}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=90))}}},
         ]}
         availability = af.get_upcoming_availability("12345", "1@2.com", now)
         self.assertEqual(expected_response, availability)

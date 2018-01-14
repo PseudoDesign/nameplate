@@ -47,8 +47,9 @@ def get_upcoming_availability(auth_token, email, start_time):
         return None
     # If a meeting time suggestion was returned, the user is available.
     for time in r.get('meetingTimeSuggestions'):
-        start = time.get('meetingTimeSlot').get('start')
+        start = time.get('meetingTimeSlot').get('start').get('dateTime')
         if start:
+            start = kiosk.outlook_service.string_to_datetime(start)
             offset = (start - start_floor).total_seconds() / 60
             availability[offset] = True
     availability['start_time'] = start_floor

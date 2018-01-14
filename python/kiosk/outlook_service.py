@@ -81,9 +81,15 @@ def post_request_url(access_token, url, data):
     else:
         return None
 
+__datetime_parse = "%Y-%m-%dT%H:%M:%S"
+
 
 def datetime_to_string(dt):
-    return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    return dt.strftime(__datetime_parse)
+
+
+def string_to_datetime(dt):
+    return datetime.strptime(dt.split(".")[0], __datetime_parse)
 
 
 def find_meeting_times(access_token, user_email, start_time, end_time, duration_minutes):
