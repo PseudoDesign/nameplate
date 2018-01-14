@@ -86,9 +86,8 @@ def datetime_to_string(dt):
     return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 
-def find_meeting_times(access_token, user_email, start_time, duration_minutes):
+def find_meeting_times(access_token, user_email, start_time, end_time, duration_minutes):
     url = "/me/findMeetingTimes"
-    end_time = start_time + timedelta(minutes=duration_minutes, seconds=1)
     data = {
         "attendees": [
             {

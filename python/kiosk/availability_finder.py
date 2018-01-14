@@ -11,9 +11,9 @@ def get_half_hour_floor(time):
     return time - timedelta(minutes=time.minute % 30, seconds=time.second, microseconds=time.microsecond)
 
 
-def get_availability(auth_token, email, start_time):
+def get_upcoming_availability(auth_token, email, start_time):
     """
-    Determine if a room if available for various durations.  Note that all time offsets are relative
+    Determine if a room if available at the following half-hour blocks.  Note that all time offsets are relative
     to the half hour floor.
     :param auth_token:
     :param email:
@@ -22,22 +22,34 @@ def get_availability(auth_token, email, start_time):
     example:
     {
         'start_time': datetime(2018, 1, 15, 6, 30)
+        0: False,
         30: True,
         60: False,
         90: False
     }
     """
     availability = {
-        30: None,
-        60: None,
-        90: None
+        0: False,
+        30: False,
+        60: False,
+        90: False
     }
+    duration = timedelta(hours=2)
     start_floor = get_half_hour_floor(start_time)
-    for duration in availability:
-        r = kiosk.outlook_service.find_meeting_times(auth_token, email, start_floor, duration)
-        if r is None:
-            return None
-        # If a meeting time suggestion was returned, the user is available.
-        availability[duration] = len(r['meetingTimeSuggestions']) > 0
+    r = kiosk.outlook_service.find_meeting_times(
+        auth_token,
+        email,
+        start_floor,
+        start_floor + duration + timedelta(seconds=2),
+        30
+    )
+    if r is None:
+        return None
+    # If a meeting time suggestion was returned, the user is available.
+    for time in r.get('meetingTimeSuggestions'):
+        start = time.get('meetingTimeSlot').get('start')
+        if start:
+            offset = (start - start_floor).total_seconds() / 60
+            availability[offset] = True
     availability['start_time'] = start_floor
     return availability
