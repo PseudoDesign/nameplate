@@ -39,7 +39,7 @@ def set_room(request, access_token):
     if room_email is None:
         return HttpResponseBadRequest("room_email is required.")
     if kiosk.outlook_service.set_room(request.session, access_token, room_email):
-        return HttpResponseRedirect(reverse("select_room"))
+        return HttpResponseRedirect(reverse("home"))
     else:
         return HttpResponseBadRequest("Invalid room_email")
 

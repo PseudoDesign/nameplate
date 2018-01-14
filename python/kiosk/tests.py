@@ -104,11 +104,11 @@ class TestSetRoom(TestCase):
 
     @patch("kiosk.outlook_service.set_room")
     @patch("kiosk.auth_helper.get_access_token")
-    def test_valid_room_email_redirects_to_select_room(self, get_access_token, set_room):
+    def test_valid_room_email_redirects_to_home(self, get_access_token, set_room):
         get_access_token.return_value = "12345"
         set_room.return_value = True
         response = self.client.get(reverse("set_room") + "?room_email=fake@room.me")
-        self.assertRedirects(response, reverse('select_room'), fetch_redirect_response=False)
+        self.assertRedirects(response, reverse('home'), fetch_redirect_response=False)
 
 
 class TestSelectRoom(TestCase):

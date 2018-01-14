@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    {{ display_name }} <br>
-    {{ room_email }}
-</body>
-</html>
+{% extends "kiosk/layout.html" %}
+{% block content %}
+    <div class="jumbotron" align="center">
+        <h1>{{ display_name }}</h1> <br>
+    </div>
+{% endblock %}
