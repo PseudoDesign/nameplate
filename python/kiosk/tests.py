@@ -4,6 +4,7 @@ from unittest.mock import patch
 from datetime import timedelta, datetime
 import json
 from kiosk import availability_finder as af
+from kiosk.outlook_service import datetime_to_string
 
 
 class TestAvailabilityFinder(TestCase):
@@ -21,33 +22,40 @@ class TestAvailabilityFinder(TestCase):
         for c in test_cases:
             self.assertEqual(af.get_half_hour_floor(c['input']), c['output'])
 
-
     @patch("kiosk.outlook_service.find_meeting_times")
     def test_full_availability(self, find_meeting_times):
         now = datetime.now()
+        now_floor = af.get_half_hour_floor(now)
         expected_response = {
-            'start_time': af.get_half_hour_floor(now),
+            'start_time': now_floor,
+            0: True,
             30: True,
             60: True,
             90: True
         }
-        find_meeting_times.return_value = {'meetingTimeSuggestions': ['some_meeting']}
-        availability = af.get_availability("12345", "1@2.com", now)
+        find_meeting_times.return_value = {'meetingTimeSuggestions': [
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=0))}}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=30)) + ".00"}}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=60))}}},
+            {'meetingTimeSlot': {'start': {'dateTime': datetime_to_string(now_floor + timedelta(minutes=90))}}},
+        ]}
+        availability = af.get_upcoming_availability("12345", "1@2.com", now)
         self.assertEqual(expected_response, availability)
-
 
     @patch("kiosk.outlook_service.find_meeting_times")
     def test_no_availability(self, find_meeting_times):
         now = datetime.now()
         expected_response = {
             'start_time': af.get_half_hour_floor(now),
+            0: False,
             30: False,
             60: False,
             90: False
         }
         find_meeting_times.return_value = {'meetingTimeSuggestions': []}
-        availability = af.get_availability("12345", "1@2.com", now)
+        availability = af.get_upcoming_availability("12345", "1@2.com", now)
         self.assertEqual(expected_response, availability)
+
 
 class TestGetRoomInfo(TestCase):
     def setUp(self):
@@ -66,13 +74,14 @@ class TestGetRoomInfo(TestCase):
         self.assertEqual(response.status_code, 400)
 
     @patch("kiosk.outlook_service.get_user")
-    @patch("kiosk.availability_finder.get_availability")
+    @patch("kiosk.availability_finder.get_upcoming_availability")
     @patch("kiosk.auth_helper.get_access_token")
     def test_valid_room_returns_json_info(self, get_access_token, get_availability, get_user):
         get_user.return_value = {"displayName": "Test Name"}
         get_access_token.return_value = "12345"
         get_availability.return_value = {
             'start_time': af.get_half_hour_floor(datetime.now()),
+            0: True,
             30: True,
             60: True,
             90: True
@@ -104,11 +113,11 @@ class TestSetRoom(TestCase):
 
     @patch("kiosk.outlook_service.set_room")
     @patch("kiosk.auth_helper.get_access_token")
-    def test_valid_room_email_redirects_to_select_room(self, get_access_token, set_room):
+    def test_valid_room_email_redirects_to_home(self, get_access_token, set_room):
         get_access_token.return_value = "12345"
         set_room.return_value = True
         response = self.client.get(reverse("set_room") + "?room_email=fake@room.me")
-        self.assertRedirects(response, reverse('select_room'), fetch_redirect_response=False)
+        self.assertRedirects(response, reverse('home'), fetch_redirect_response=False)
 
 
 class TestSelectRoom(TestCase):

@@ -1,10 +1,11 @@
 {% extends "kiosk/layout.html" %}
 {% block content %}
     <div class="jumbotron">
-        <h1>Select Room Sample</h1>
+        <h2>Select Room</h2>
 
         {% for room in rooms %}
-            {{ room.name }}<br>
+            <a class="btn btn-lg btn-primary" href="{% url 'set_room'  %}?room_email={{ room.address }}" role="button" id="connect-button">{{ room.name }}</a>
+            <br><br>
         {% endfor %}
 
     </div>
