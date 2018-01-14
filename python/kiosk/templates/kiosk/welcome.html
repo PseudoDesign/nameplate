@@ -3,8 +3,8 @@
 {% block content %}
     <div class="jumbotron" align="center">
 
-        <h1 id="room_name">{{ display_name }}</h1> <br>
-        <div id="current_status">Test Status</div>
+        <h1 id="room_name">{{ display_name }}</h1>
+        <div id="current_status"></div>
         <div id="upcoming_status">Test Upcoming Status</div>
 
     </div>
@@ -15,8 +15,67 @@
         var room_email = "{{ room_email }}";
         var room_info_url = "{% url 'room_info' %}?room_email=" + room_email;
 
-        function update() {
+        function string_to_date( time ) {
+            return Date.parse(time);
+        }
+
+        function set_current_status( status ) {
+            if (status) {
+                document.getElementById("current_status").style.color = 'green';
+                document.getElementById("current_status").innerHTML = "Available";
+            }
+            else {
+                document.getElementById("current_status").style.color = 'red';
+                document.getElementById("current_status").innerHTML = "Occupied";
+            }
+        }
+
+        function time_delta_minutes(end_time, start_time) {
+            return Math.round((end_time - start_time) / (1000 * 60));
+        }
+
+        function set_upcoming_status( availability, start_time, current_time) {
+                var current_status = availability[0];
+                var state_change_minutes = null;
+                var offset_minutes = time_delta_minutes(current_time, start_time);
+                if (current_status != availability['30']) {
+                    state_change_minutes = 30 - offset_minutes;
+                }
+                else if (current_status != availability['60']) {
+                    state_change_minutes = 60 - offset_minutes;
+                }
+                else if (current_status != availability['90']) {
+                    state_change_minutes = 90 - offset_minutes;
+                }
+                var new_string = "";
+                if ( state_change_minutes != null ) {
+                    if ( current_status ) {
+                        new_string = "Free for ";
+                    }
+                    else {
+                        new_string = "Free in ";
+                    }
+                    state_change_minutes = Math.max(1, state_change_minutes);
+                    new_string += state_change_minutes + " minute";
+                    if ( state_change_minutes != 1 ) {
+                        new_string += "s";
+                    }
+                }
+                document.getElementById("upcoming_status").innerHTML = new_string;
 
         }
+
+        function update() {
+            $.getJSON( room_info_url, function ( data ) {
+
+                var current_status = data['availability'][0];
+                var start_time = string_to_date(data['availability']['start_time']);
+                var current_time = string_to_date(data['availability']['current_time']);
+
+                set_current_status(current_status);
+                set_upcoming_status(data['availability'], start_time, current_time)
+            });
+        }
+        update();
     </script>
 {% endblock %}

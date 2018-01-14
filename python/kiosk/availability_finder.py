@@ -53,4 +53,5 @@ def get_upcoming_availability(auth_token, email, start_time):
             offset = (start - start_floor).total_seconds() / 60
             availability[offset] = True
     availability['start_time'] = start_floor
+    availability['current_time'] = start_time - timedelta(microseconds=start_time.microsecond)
     return availability
