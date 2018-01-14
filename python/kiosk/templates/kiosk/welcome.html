@@ -1,6 +1,22 @@
 {% extends "kiosk/layout.html" %}
+{% load static %}
 {% block content %}
     <div class="jumbotron" align="center">
-        <h1>{{ display_name }}</h1> <br>
+
+        <h1 id="room_name">{{ display_name }}</h1> <br>
+        <div id="current_status">Test Status</div>
+        <div id="upcoming_status">Test Upcoming Status</div>
+
     </div>
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+
+    <script>
+        var room_email = "{{ room_email }}";
+        var room_info_url = "{% url 'room_info' %}?room_email=" + room_email;
+
+        function update() {
+
+        }
+    </script>
 {% endblock %}

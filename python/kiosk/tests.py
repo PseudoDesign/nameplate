@@ -76,12 +76,31 @@ class TestGetRoomInfo(TestCase):
     @patch("kiosk.outlook_service.get_user")
     @patch("kiosk.availability_finder.get_upcoming_availability")
     @patch("kiosk.auth_helper.get_access_token")
-    def test_valid_room_returns_json_info(self, get_access_token, get_availability, get_user):
+    def test_valid_room_available(self, get_access_token, get_availability, get_user):
         get_user.return_value = {"displayName": "Test Name"}
         get_access_token.return_value = "12345"
         get_availability.return_value = {
             'start_time': af.get_half_hour_floor(datetime.now()),
             0: True,
+            30: True,
+            60: True,
+            90: True
+        }
+        response = self.client.get(reverse('room_info') + "?room_email=1@2.co")
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(get_availability.return_value[30], data['availability']['30'])
+        self.assertEqual("Test Name", data['name'])
+
+    @patch("kiosk.outlook_service.get_user")
+    @patch("kiosk.availability_finder.get_upcoming_availability")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_status_room_occupied(self, get_access_token, get_availability, get_user):
+        get_user.return_value = {"displayName": "Test Name"}
+        get_access_token.return_value = "12345"
+        get_availability.return_value = {
+            'start_time': af.get_half_hour_floor(datetime.now()),
+            0: False,
             30: True,
             60: True,
             90: True
