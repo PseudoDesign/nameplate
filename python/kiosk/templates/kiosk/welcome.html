@@ -5,7 +5,14 @@
 
         <h1 id="room_name">{{ display_name }}</h1>
         <div id="current_status"></div>
-        <div id="upcoming_status">Test Upcoming Status</div>
+        <div id="upcoming_status"></div>
+
+        <div id="schedule_buttons" hidden>
+            <h5>Hot Book:</h5>
+            <a class="btn btn-lg btn-primary" href="" role="button" id="schedule_button1">30 minutes</a>
+            <a class="btn btn-lg btn-primary" href="" role="button" id="schedule_button2">60 minutes</a>
+            <a class="btn btn-lg btn-primary" href="" role="button" id="schedule_button3">90 minutes</a>
+        </div>
 
     </div>
 
@@ -34,10 +41,9 @@
             return Math.round((end_time - start_time) / (1000 * 60));
         }
 
-        function set_upcoming_status( availability, start_time, current_time) {
-                var current_status = availability[0];
+        function set_upcoming_status( availability, offset_minutes) {
+                var current_status = availability['0'];
                 var state_change_minutes = null;
-                var offset_minutes = time_delta_minutes(current_time, start_time);
                 if (current_status != availability['30']) {
                     state_change_minutes = 30 - offset_minutes;
                 }
@@ -62,7 +68,16 @@
                     }
                 }
                 document.getElementById("upcoming_status").innerHTML = new_string;
+        }
 
+        function set_schedule_buttons(availability, current_status, offset_minutes) {
+            if ( !current_status ) {
+                $("#schedule_buttons").hide();
+            }
+            else {
+                // TODO: Configure buttons
+                $("#schedule_buttons").show();
+            }
         }
 
         function update() {
@@ -71,11 +86,14 @@
                 var current_status = data['availability'][0];
                 var start_time = string_to_date(data['availability']['start_time']);
                 var current_time = string_to_date(data['availability']['current_time']);
+                var offset_minutes = time_delta_minutes(current_time, start_time);
 
                 set_current_status(current_status);
-                set_upcoming_status(data['availability'], start_time, current_time)
+                set_upcoming_status(data['availability'], offset_minutes);
+                set_schedule_buttons(data['availability'], current_status, offset_minutes);
             });
         }
         update();
+        setInterval(update, 5000)
     </script>
 {% endblock %}

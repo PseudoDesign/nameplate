@@ -93,7 +93,7 @@ def outlook_login(request):
 
 def get_token(request):
     auth_code = request.GET.get('code')
-    # TODO: clear session here?
+    request.session.clear()
     if kiosk.auth_helper.process_auth_code(request, auth_code, request.build_absolute_uri(reverse('get_token'))):
         return HttpResponseRedirect(reverse('home'))
     else:
