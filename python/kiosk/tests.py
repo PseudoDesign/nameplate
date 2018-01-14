@@ -80,6 +80,7 @@ class TestGetRoomInfo(TestCase):
         get_access_token.return_value = "12345"
         get_availability.return_value = {
             'start_time': af.get_half_hour_floor(datetime.now()),
+            0: True,
             30: True,
             60: True,
             90: True
