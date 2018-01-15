@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from kiosk.views import outlook_login, get_token, home, outlook_logout, select_room, set_room, room_info
+from kiosk.views import outlook_login, get_token, home, outlook_logout, select_room, set_room, room_info, schedule_room
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +26,6 @@ urlpatterns = [
     path(r'select_room/', select_room, name='select_room'),
     path(r'set_room', set_room, name='set_room'),
     path(r'room_info', room_info, name='room_info'),
-    path(r'schedule_room', home, name='schedule_room'),
+    path(r'schedule_room', schedule_room, name='schedule_room'),
     path(r'', home, name='home')
 ]

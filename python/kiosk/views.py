@@ -6,6 +6,7 @@ import kiosk.auth_helper
 import kiosk.outlook_service
 import kiosk.availability_finder
 from datetime import datetime
+from django.contrib import messages
 from kiosk.forms import SetRoomForm, ScheduleRoomForm
 
 
@@ -18,6 +19,25 @@ def require_login(view):
             return HttpResponseRedirect(reverse('outlook_login'))
     return function_wrapper
 
+
+@csrf_protect
+@require_login
+def schedule_room(request, access_token):
+    if request.method == "POST":
+        schedule = ScheduleRoomForm(request.POST)
+        if not schedule.is_valid():
+            return HttpResponseBadRequest("room_email is required.")
+        if kiosk.outlook_service.schedule_room(
+            access_token,
+            schedule.cleaned_data['room_email'],
+            schedule.cleaned_data['start_time'],
+            schedule.cleaned_data['duration_minutes']
+        ):
+            messages.success(request, "Successfully Scheduled Room")
+        else:
+            messages.error(request, "Unable to Schedule Room")
+        return HttpResponseRedirect(reverse("home"))
+    return HttpResponseRedirect(reverse("home"))
 
 @require_login
 def room_info(request, access_token):

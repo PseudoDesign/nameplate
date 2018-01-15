@@ -1,6 +1,6 @@
 {% extends "kiosk/layout.html" %}
 {% block content %}
-    <div class="jumbotron" align="center">
+    <div align="center">
 
         <h1 id="room_name">{{ display_name }}</h1>
         <div id="current_status"></div>
@@ -15,7 +15,7 @@
 
     </div>
 
-    <form id="schedule_room_form" method="post" action=""{% url 'schedule_room' %} hidden>
+    <form id="schedule_room_form" method="post" action="{% url 'schedule_room' %}" hidden>
         {% csrf_token %}
         {{ schedule_room_form }}
     </form>
@@ -135,6 +135,6 @@
             });
         }
         update();
-        setInterval(update, 5000)
+        setInterval(update, 5000);
     </script>
 {% endblock %}

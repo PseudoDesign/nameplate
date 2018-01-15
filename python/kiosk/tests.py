@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.contrib.messages import constants as msg
 from django.urls import reverse
 from unittest.mock import patch
 from datetime import timedelta, datetime
@@ -21,6 +22,39 @@ class TestScheduleRoomForm(TestCase):
         form_data = {'start_time': "2018-01-15T01:48:47", 'duration_minutes': '30', 'room_email': "herp@derp.com"}
         form = ScheduleRoomForm(data=form_data)
         self.assertTrue(form.is_valid())
+
+
+class TestScheduleRoom(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_get_request_redirect_to_home(self, get_access_token):
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse("schedule_room"))
+        self.assertRedirects(response, reverse("home"), fetch_redirect_response=False)
+
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_invalid_form_returns_400(self, get_access_token):
+        get_access_token.return_value = "12345"
+        response = self.client.post(reverse("schedule_room"), {})
+        self.assertEqual(response.status_code, 400)
+
+    @patch("kiosk.outlook_service.get_user")
+    @patch("kiosk.outlook_service.schedule_room")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_scheduling_error_redirects_home_with_error_message(self, get_access_token, schedule_room, get_user):
+        schedule_room.return_value = False
+        get_access_token.return_value = "12345"
+        get_user.return_value = {"displayName": "Test Room"}
+        session = self.client.session
+        session['room_email'] = "testroom@test.herp"
+        session.save()
+        response = self.client.post(
+            reverse("schedule_room"),
+            {'start_time': "2018-01-15T01:48:47", 'duration_minutes': '30', 'room_email': "herp@derp.com"},
+        )
+        self.assertRedirects(response, reverse("home"))
 
 class TestAvailabilityFinder(TestCase):
     def test_get_half_hour_floor(self):

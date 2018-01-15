@@ -49,6 +49,30 @@ def get_rooms(access_token):
     else:
         return "{0}: {1}".format(r.status_code, r.text)
 
+def schedule_room(access_token, room_email, start_time, duration_minutes):
+    url = "/me/events"
+    end_time = start_time + timedelta(minutes=duration_minutes)
+    data = {
+        "start": {
+            "dateTime": datetime_to_string(start_time),
+            "timeZone": "UTC"
+        },
+        "end": {
+            "dateTime": datetime_to_string(end_time),
+            "timeZone": "UTC"
+        },
+        "attendees": [
+            {
+                "emailAddress": {
+                    "address": room_email,
+                },
+                "type": "required"
+            }
+        ],
+        "showAs": "Free"
+    }
+    response = post_request_url(access_token, url, data)
+    return response
 
 def set_room(session, access_token, room_email):
     user = get_user(access_token, room_email)
@@ -78,6 +102,8 @@ def post_request_url(access_token, url, data):
 
     if r.status_code == requests.codes.ok:
         return r.json()
+    elif r.status_code == requests.codes.created:
+        return True
     else:
         return None
 

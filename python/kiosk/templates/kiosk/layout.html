@@ -10,9 +10,13 @@
 
     <script src="{% static 'js/jquery.js' %}"></script>
 
-    <div class="container main-container">
-        <div id="message" {% if message_color %}color="{{ message_color }}"{% endif %}>
-            {% if message %}{{ message }}{% endif %}
+    <div class="container main-container jumbotron">
+        <div id="message" {% if message_color %}color="{{ message_color }}"{% endif %} align="center">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
         </div>
         {% block content %}{% endblock %}
     </div>
@@ -20,7 +24,7 @@
     <script>
 
         function fadeout_message() {
-            $("message").fadeOut(1000);
+            $("#message").fadeOut(1000);
         }
 
         setTimeout(fadeout_message, 5000);
