@@ -123,4 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'kiosk/templates'),)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "kiosk/static")
+]
 STATIC_URL = '/static/'

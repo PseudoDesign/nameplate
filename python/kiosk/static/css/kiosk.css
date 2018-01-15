@@ -1,0 +1,12 @@
+.jumbotron h1 {
+    color: #f77c00;
+    font-weight: bold;
+}
+
+.jumbotron {
+    background-color: #8c8c8c;
+    font-family: "Abadi MT Condensed";
+    font-weight: bold;
+    font-size: 150%;
+    color: #ffffff;
+}
