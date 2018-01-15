@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 import kiosk.auth_helper
 import kiosk.outlook_service
 import kiosk.availability_finder
 from datetime import datetime
+from kiosk.forms import SetRoomForm
 
 
 def require_login(view):
@@ -33,15 +35,18 @@ def room_info(request, access_token):
         return HttpResponseBadRequest("Invalid room_email")
 
 
+@csrf_protect
 @require_login
 def set_room(request, access_token):
-    room_email = request.GET.get('room_email')
-    if room_email is None:
-        return HttpResponseBadRequest("room_email is required.")
-    if kiosk.outlook_service.set_room(request.session, access_token, room_email):
-        return HttpResponseRedirect(reverse("home"))
-    else:
-        return HttpResponseBadRequest("Invalid room_email")
+    if request.method == "POST":
+        room = SetRoomForm(request.POST)
+        if not room.is_valid():
+            return HttpResponseBadRequest("room_email is required.")
+        if kiosk.outlook_service.set_room(request.session, access_token, room.cleaned_data['room_email']):
+            return HttpResponseRedirect(reverse("home"))
+        else:
+            return HttpResponseBadRequest("Invalid room_email")
+    return HttpResponseRedirect(reverse("home"))
 
 
 @require_login
@@ -65,9 +70,12 @@ def select_room(request, access_token):
     rooms = kiosk.outlook_service.get_rooms(access_token)
     if rooms is None:
         return HttpResponseNotFound("Could not get the list of rooms.")
-    context = {
-        "rooms": rooms
-    }
+    context = {'rooms': []}
+    for room in rooms:
+        context['rooms'] += [{
+            'form': SetRoomForm(data={'room_email': room['address']}),
+            'name': room['name']
+        }]
     return render(request, "kiosk/select_room.html", context)
 
 
