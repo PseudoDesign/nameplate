@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 import kiosk.auth_helper
@@ -34,15 +35,18 @@ def room_info(request, access_token):
         return HttpResponseBadRequest("Invalid room_email")
 
 
+@csrf_protect
 @require_login
 def set_room(request, access_token):
-    room_email = request.GET.get('room_email')
-    if room_email is None:
-        return HttpResponseBadRequest("room_email is required.")
-    if kiosk.outlook_service.set_room(request.session, access_token, room_email):
-        return HttpResponseRedirect(reverse("home"))
-    else:
-        return HttpResponseBadRequest("Invalid room_email")
+    if request.method == "POST":
+        room = SetRoomForm(request.POST)
+        if not room.is_valid():
+            return HttpResponseBadRequest("room_email is required.")
+        if kiosk.outlook_service.set_room(request.session, access_token, room.cleaned_data['room_email']):
+            return HttpResponseRedirect(reverse("home"))
+        else:
+            return HttpResponseBadRequest("Invalid room_email")
+    return HttpResponseRedirect(reverse("home"))
 
 
 @require_login

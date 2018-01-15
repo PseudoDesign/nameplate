@@ -127,9 +127,15 @@ class TestSetRoom(TestCase):
         self.client = Client()
 
     @patch("kiosk.auth_helper.get_access_token")
+    def test_get_requests_redirect_to_home(self, get_access_token):
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse('set_room'))
+        self.assertRedirects(response, reverse('home'), fetch_redirect_response=False)
+
+    @patch("kiosk.auth_helper.get_access_token")
     def test_no_room_email_returns_400(self, get_access_token):
         get_access_token.return_value = "12345"
-        response = self.client.get(reverse("set_room"))
+        response = self.client.post(reverse("set_room"), {})
         self.assertEqual(response.status_code, 400)
 
     @patch("kiosk.outlook_service.set_room")
@@ -137,7 +143,7 @@ class TestSetRoom(TestCase):
     def test_invalid_room_email_returns_400(self, get_access_token, set_room):
         get_access_token.return_value = "12345"
         set_room.return_value = False
-        response = self.client.get(reverse("set_room") + "?room_email=fake")
+        response = self.client.post(reverse("set_room"), {'room_email': "fake"})
         self.assertEqual(response.status_code, 400)
 
     @patch("kiosk.outlook_service.set_room")
@@ -145,7 +151,7 @@ class TestSetRoom(TestCase):
     def test_valid_room_email_redirects_to_home(self, get_access_token, set_room):
         get_access_token.return_value = "12345"
         set_room.return_value = True
-        response = self.client.get(reverse("set_room") + "?room_email=fake@room.me")
+        response = self.client.post(reverse("set_room"), {'room_email': "fake@room.me"})
         self.assertRedirects(response, reverse('home'), fetch_redirect_response=False)
 
 
