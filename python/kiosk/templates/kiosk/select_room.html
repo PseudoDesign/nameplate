@@ -4,8 +4,11 @@
         <h2>Select Room</h2>
 
         {% for room in rooms %}
-            <a class="btn btn-lg btn-primary" href="{% url 'set_room'  %}?room_email={{ room.address }}" role="button" id="connect-button">{{ room.name }}</a>
-            <br><br>
+            <form action="{% url 'set_room'  %}" method="post">
+                {% csrf_token %}
+                {{ room.form }}
+                <input type="submit" value="{{ room.name }}" />
+            </form><br>
         {% endfor %}
 
     </div>

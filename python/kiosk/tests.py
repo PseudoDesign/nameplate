@@ -167,11 +167,11 @@ class TestSelectRoom(TestCase):
         get_rooms.return_value = [
             {
                 "name": "Test Room",
-                "email": "test@room.mail"
+                "address": "test@room.mail"
             },
             {
                 "name": "Test Room 2",
-                "email": "test2@room.mail"
+                "address": "test2@room.mail"
             }
         ]
 
@@ -180,7 +180,8 @@ class TestSelectRoom(TestCase):
         rooms = response.context['rooms']
         for x in range(len(get_rooms.return_value)):
             self.assertTrue(rooms[x]['form'].is_valid())
-            self.assertEqual(rooms[x]['form'].cleaned_data['room_email'], get_rooms.return_value[x]['email'])
+            self.assertEqual(rooms[x]['form'].cleaned_data['room_email'], get_rooms.return_value[x]['address'])
+            self.assertEqual(rooms[x]['name'], get_rooms.return_value[x]['name'])
 
 
 class TestGetToken(TestCase):

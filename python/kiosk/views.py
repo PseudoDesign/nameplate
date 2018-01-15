@@ -69,7 +69,7 @@ def select_room(request, access_token):
     context = {'rooms': []}
     for room in rooms:
         context['rooms'] += [{
-            'form': SetRoomForm(data={'room_email': room['email']}),
+            'form': SetRoomForm(data={'room_email': room['address']}),
             'name': room['name']
         }]
     return render(request, "kiosk/select_room.html", context)
