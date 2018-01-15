@@ -134,7 +134,9 @@
                 set_schedule_buttons(data['availability'], current_status, offset_minutes);
             });
         }
+        {% if not messages %}
         update();
-        setInterval(update, 5000);
+        {% endif %}
+        setInterval(update, 15000);
     </script>
 {% endblock %}
