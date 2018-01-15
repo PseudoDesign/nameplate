@@ -255,6 +255,20 @@ class TestHomeView(TestCase):
         self.assertEqual(response.context['room_email'], "testroom@test.herp")
         self.assertEqual(response.context['display_name'], "Test Room")
 
+    @patch("kiosk.outlook_service.get_user")
+    @patch("kiosk.auth_helper.get_access_token")
+    def test_provides_schedule_room_form(self, get_access_token, get_user):
+        get_user.return_value = {
+            "displayName": "Test Room"
+        }
+        session = self.client.session
+        session['room_email'] = "testroom@test.herp"
+        session.save()
+        get_access_token.return_value = "12345"
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(isinstance(response.context['schedule_room_form'], ScheduleRoomForm))
+
 
 class TestLogoutView(TestCase):
     def setUp(self):

@@ -6,7 +6,7 @@ import kiosk.auth_helper
 import kiosk.outlook_service
 import kiosk.availability_finder
 from datetime import datetime
-from kiosk.forms import SetRoomForm
+from kiosk.forms import SetRoomForm, ScheduleRoomForm
 
 
 def require_login(view):
@@ -60,7 +60,8 @@ def home(request, access_token):
         return HttpResponseRedirect(reverse("select_room"))
     context = {
         'display_name': display_name,
-        'room_email': room_email
+        'room_email': room_email,
+        'schedule_room_form': ScheduleRoomForm()
     }
     return render(request, "kiosk/welcome.html", context)
 
