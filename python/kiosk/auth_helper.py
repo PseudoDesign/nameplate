@@ -28,6 +28,7 @@ scopes = [ 'openid',
            "Calendars.ReadWrite.Shared"
            ]
 
+
 def get_signin_url(redirect_uri):
     # Build the query parameters for the signin url
     params = { 'client_id': client_id,
@@ -100,6 +101,7 @@ def process_auth_code(request, auth_code, redirect_uri):
     request.session['token_expires'] = expiration
     request.session['user_email'] = user['mail']
     return True
+
 
 def get_access_token(request, redirect_uri):
     current_token = request.session.get('access_token')
