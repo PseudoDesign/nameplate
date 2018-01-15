@@ -1,14 +1,29 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Nameplate Kiosk</title>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 </head>
 <body style="padding-top: 70px; padding-bottom: 70px;">
 
+    <script src="{% static 'js/jquery.js' %}"></script>
+
     <div class="container main-container">
+        <div id="message" {% if message_color %}color="{{ message_color }}"{% endif %}>
+            {% if message %}{{ message }}{% endif %}
+        </div>
         {% block content %}{% endblock %}
     </div>
+
+    <script>
+
+        function fadeout_message() {
+            $("message").fadeOut(1000);
+        }
+
+        setTimeout(fadeout_message, 5000);
+    </script>
 </body>
 </html>

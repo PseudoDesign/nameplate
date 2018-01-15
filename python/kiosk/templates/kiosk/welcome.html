@@ -1,5 +1,4 @@
 {% extends "kiosk/layout.html" %}
-{% load static %}
 {% block content %}
     <div class="jumbotron" align="center">
 
@@ -15,8 +14,6 @@
         </div>
 
     </div>
-
-    <script src="{% static 'js/jquery.js' %}"></script>
 
     <form id="schedule_room_form" method="post" action=""{% url 'schedule_room' %} hidden>
         {% csrf_token %}
