@@ -61,7 +61,7 @@ def home(request, access_token):
     context = {
         'display_name': display_name,
         'room_email': room_email,
-        'schedule_room_form': ScheduleRoomForm()
+        'schedule_room_form': ScheduleRoomForm(data={'room_email': room_email})
     }
     return render(request, "kiosk/welcome.html", context)
 

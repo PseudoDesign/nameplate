@@ -26,5 +26,6 @@ urlpatterns = [
     path(r'select_room/', select_room, name='select_room'),
     path(r'set_room', set_room, name='set_room'),
     path(r'room_info', room_info, name='room_info'),
+    path(r'schedule_room', home, name='schedule_room'),
     path(r'', home, name='home')
 ]

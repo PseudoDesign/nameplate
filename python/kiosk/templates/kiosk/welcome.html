@@ -9,18 +9,24 @@
 
         <div id="schedule_buttons" hidden>
             <h5>Hot Book:</h5>
-            <a class="btn btn-lg btn-primary" href="" role="button" id="schedule_button1">30 minutes</a>
-            <a class="btn btn-lg btn-primary" href="" role="button" id="schedule_button2">60 minutes</a>
-            <a class="btn btn-lg btn-primary" href="" role="button" id="schedule_button3">90 minutes</a>
+            <a class="btn btn-lg btn-primary" onclick="schedule_for_interval(30)" role="button" id="schedule_button1">30 minutes</a>
+            <a class="btn btn-lg btn-primary" onclick="schedule_for_interval(60)" role="button" id="schedule_button2">60 minutes</a>
+            <a class="btn btn-lg btn-primary" onclick="schedule_for_interval(90)" role="button" id="schedule_button3">90 minutes</a>
         </div>
 
     </div>
 
     <script src="{% static 'js/jquery.js' %}"></script>
 
+    <form id="schedule_room_form" method="post" action=""{% url 'schedule_room' %} hidden>
+        {% csrf_token %}
+        {{ schedule_room_form }}
+    </form>
+
     <script>
         var room_email = "{{ room_email }}";
         var room_info_url = "{% url 'room_info' %}?room_email=" + room_email;
+        var start_time = null;
 
         function string_to_date( time ) {
             return Date.parse(time);
@@ -105,11 +111,20 @@
             }
         }
 
+        function schedule_for_interval( interval_minutes ) {
+            if ( start_time == null) {
+                alert("Error");
+            }
+            else {
+
+            }
+        }
+
         function update() {
             $.getJSON( room_info_url, function ( data ) {
 
                 var current_status = data['availability']['0'];
-                var start_time = string_to_date(data['availability']['start_time']);
+                start_time = string_to_date(data['availability']['start_time']);
                 var current_time = string_to_date(data['availability']['current_time']);
                 var offset_minutes = time_delta_minutes(current_time, start_time);
 

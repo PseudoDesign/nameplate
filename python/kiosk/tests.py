@@ -18,7 +18,7 @@ class TestSetRoomForm(TestCase):
 
 class TestScheduleRoomForm(TestCase):
     def test_form(self):
-        form_data = {'start_time': "2018-01-15T01:48:47", 'duration_minutes': '30'}
+        form_data = {'start_time': "2018-01-15T01:48:47", 'duration_minutes': '30', 'room_email': "herp@derp.com"}
         form = ScheduleRoomForm(data=form_data)
         self.assertTrue(form.is_valid())
 
@@ -257,7 +257,7 @@ class TestHomeView(TestCase):
 
     @patch("kiosk.outlook_service.get_user")
     @patch("kiosk.auth_helper.get_access_token")
-    def test_provides_schedule_room_form(self, get_access_token, get_user):
+    def test_provides_schedule_room_form_with_email(self, get_access_token, get_user):
         get_user.return_value = {
             "displayName": "Test Room"
         }
