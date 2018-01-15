@@ -27,6 +27,7 @@
         var room_email = "{{ room_email }}";
         var room_info_url = "{% url 'room_info' %}?room_email=" + room_email;
         var start_time = null;
+        var start_time_string = null;
 
         function string_to_date( time ) {
             return Date.parse(time);
@@ -112,11 +113,13 @@
         }
 
         function schedule_for_interval( interval_minutes ) {
-            if ( start_time == null) {
+            if ( start_time_string == null) {
                 alert("Error");
             }
             else {
-
+                $("#id_start_time").val(start_time_string);
+                $("#id_duration_minutes").val(interval_minutes);
+                $("#schedule_room_form").submit();
             }
         }
 
@@ -124,7 +127,8 @@
             $.getJSON( room_info_url, function ( data ) {
 
                 var current_status = data['availability']['0'];
-                start_time = string_to_date(data['availability']['start_time']);
+                start_time_string = data['availability']['start_time'];
+                start_time = string_to_date(start_time_string);
                 var current_time = string_to_date(data['availability']['current_time']);
                 var offset_minutes = time_delta_minutes(current_time, start_time);
 
