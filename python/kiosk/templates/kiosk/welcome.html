@@ -75,7 +75,32 @@
                 $("#schedule_buttons").hide();
             }
             else {
-                // TODO: Configure buttons
+                if ( availability['0'] ) {
+                    if (offset_minutes <= 25) {
+                        $("#schedule_button1").text((30 - offset_minutes) + " minutes");
+                    }
+                    else
+                    {
+                        $("#schedule_button1").hide();
+                    }
+                    if ( availability['30'] ) {
+                        $("#schedule_button2").text((60 - offset_minutes) + " minutes");
+                        if ( availability['60'] ) {
+                            $("#schedule_button3").text((90 - offset_minutes) + " minutes");
+                        }
+                        else {
+                            $("#schedule_button3").hide();
+                        }
+                    }
+                    else {
+                        $("#schedule_button2").hide();
+                    }
+                }
+                else {
+                    $("#schedule_button1").hide();
+                    $("#schedule_button2").hide();
+                    $("#schedule_button3").hide();
+                }
                 $("#schedule_buttons").show();
             }
         }
@@ -83,7 +108,7 @@
         function update() {
             $.getJSON( room_info_url, function ( data ) {
 
-                var current_status = data['availability'][0];
+                var current_status = data['availability']['0'];
                 var start_time = string_to_date(data['availability']['start_time']);
                 var current_time = string_to_date(data['availability']['current_time']);
                 var offset_minutes = time_delta_minutes(current_time, start_time);

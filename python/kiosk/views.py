@@ -5,6 +5,7 @@ import kiosk.auth_helper
 import kiosk.outlook_service
 import kiosk.availability_finder
 from datetime import datetime
+from kiosk.forms import SetRoomForm
 
 
 def require_login(view):
@@ -65,9 +66,12 @@ def select_room(request, access_token):
     rooms = kiosk.outlook_service.get_rooms(access_token)
     if rooms is None:
         return HttpResponseNotFound("Could not get the list of rooms.")
-    context = {
-        "rooms": rooms
-    }
+    context = {'rooms': []}
+    for room in rooms:
+        context['rooms'] += [{
+            'form': SetRoomForm(data={'room_email': room['email']}),
+            'name': room['name']
+        }]
     return render(request, "kiosk/select_room.html", context)
 
 

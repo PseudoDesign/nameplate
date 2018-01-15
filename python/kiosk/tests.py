@@ -5,6 +5,14 @@ from datetime import timedelta, datetime
 import json
 from kiosk import availability_finder as af
 from kiosk.outlook_service import datetime_to_string
+from kiosk.forms import SetRoomForm
+
+
+class TestSetRoomForm(TestCase):
+    def test_form(self):
+        form_data = {'room_email': "1@2.com"}
+        form = SetRoomForm(data=form_data)
+        self.assertTrue(form.is_valid())
 
 
 class TestAvailabilityFinder(TestCase):
@@ -28,6 +36,7 @@ class TestAvailabilityFinder(TestCase):
         now_floor = af.get_half_hour_floor(now)
         expected_response = {
             'start_time': now_floor,
+            'current_time': now - timedelta(microseconds=now.microsecond),
             0: True,
             30: True,
             60: True,
@@ -47,6 +56,7 @@ class TestAvailabilityFinder(TestCase):
         now = datetime.now()
         expected_response = {
             'start_time': af.get_half_hour_floor(now),
+            'current_time': now - timedelta(microseconds=now.microsecond),
             0: False,
             30: False,
             60: False,
@@ -158,11 +168,19 @@ class TestSelectRoom(TestCase):
             {
                 "name": "Test Room",
                 "email": "test@room.mail"
+            },
+            {
+                "name": "Test Room 2",
+                "email": "test2@room.mail"
             }
         ]
+
         get_access_token.return_value = "12345"
         response = self.client.get(reverse("select_room"))
-        self.assertEqual(response.context["rooms"], get_rooms.return_value)
+        rooms = response.context['rooms']
+        for x in range(len(get_rooms.return_value)):
+            self.assertTrue(rooms[x]['form'].is_valid())
+            self.assertEqual(rooms[x]['form'].cleaned_data['room_email'], get_rooms.return_value[x]['email'])
 
 
 class TestGetToken(TestCase):
@@ -197,7 +215,7 @@ class TestHomeView(TestCase):
     def test_redirect_to_select_room_when_room_is_not_set(self, get_access_token):
         get_access_token.return_value = "12345"
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('select_room'))
+        self.assertRedirects(response, reverse('select_room'), fetch_redirect_response=False)
 
     @patch("kiosk.outlook_service.get_user")
     @patch("kiosk.auth_helper.get_access_token")
@@ -206,7 +224,7 @@ class TestHomeView(TestCase):
         get_access_token.return_value = "12345"
         self.client.session['room_email'] = "1@2.com"
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('select_room'))
+        self.assertRedirects(response, reverse('select_room'), fetch_redirect_response=False)
 
     @patch("kiosk.outlook_service.get_user")
     @patch("kiosk.auth_helper.get_access_token")
