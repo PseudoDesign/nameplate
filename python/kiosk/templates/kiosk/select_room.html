@@ -7,7 +7,7 @@
             <form action="{% url 'set_room'  %}" method="post">
                 {% csrf_token %}
                 {{ room.form }}
-                <input type="submit" value="{{ room.name }}" />
+                <button class="btn btn-lg btn-primary" type="submit">{{ room.name }}</button>
             </form><br>
         {% endfor %}
 
