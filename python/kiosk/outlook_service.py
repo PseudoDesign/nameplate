@@ -81,15 +81,15 @@ def post_request_url(access_token, url, data):
     else:
         return None
 
-__datetime_parse = "%Y-%m-%dT%H:%M:%S"
+datetime_format = "%Y-%m-%dT%H:%M:%S"
 
 
 def datetime_to_string(dt):
-    return dt.strftime(__datetime_parse)
+    return dt.strftime(datetime_format)
 
 
 def string_to_datetime(dt):
-    return datetime.strptime(dt.split(".")[0], __datetime_parse)
+    return datetime.strptime(dt.split(".")[0], datetime_format)
 
 
 def find_meeting_times(access_token, user_email, start_time, end_time, duration_minutes):
@@ -123,18 +123,6 @@ def find_meeting_times(access_token, user_email, start_time, end_time, duration_
     }
     response = post_request_url(access_token, url, data)
     return response
-
-
-def get_room_info(access_token, room_email):
-    room_user = get_user(access_token, room_email)
-    return find_meeting_times(access_token, room_email, datetime.now(), 15)
-    if room_user:
-        return {
-            'name': room_user['displayName'],
-            'email': room_email,
-
-        }
-    return None
 
 
 def get_me(access_token):

@@ -6,6 +6,7 @@ import json
 from kiosk import availability_finder as af
 from kiosk.outlook_service import datetime_to_string
 from kiosk.forms import SetRoomForm
+from kiosk.forms import ScheduleRoomForm
 
 
 class TestSetRoomForm(TestCase):
@@ -14,6 +15,12 @@ class TestSetRoomForm(TestCase):
         form = SetRoomForm(data=form_data)
         self.assertTrue(form.is_valid())
 
+
+class TestScheduleRoomForm(TestCase):
+    def test_form(self):
+        form_data = {'start_time': "2018-01-15T01:48:47", 'duration_minutes': '30'}
+        form = ScheduleRoomForm(data=form_data)
+        self.assertTrue(form.is_valid())
 
 class TestAvailabilityFinder(TestCase):
     def test_get_half_hour_floor(self):
