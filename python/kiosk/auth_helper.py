@@ -2,10 +2,11 @@ from urllib.parse import urlencode
 from .outlook_service import get_me
 import requests
 import time
+from docker import secrets
 
 # Client ID and secret
-client_id = ""#ExchangeAuthKeys.ID
-client_secret = ""#ExchangeAuthKeys.PASSWORD
+client_id = secrets.get("nameplate_api_id")
+client_secret = secrets.get("nameplate_api_passkey")
 
 # Constant strings for OAuth2 flow
 # The OAuth authority
