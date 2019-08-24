@@ -3,7 +3,7 @@ services:
     nameplate-server:
         build:
           context: ..
-          dockerfile: docker/server/Dockerfile
+          dockerfile: docker/server/dev.Dockerfile
         ports:
           - 8000:8000
         secrets:
