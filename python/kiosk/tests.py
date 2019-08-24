@@ -1,5 +1,4 @@
 from django.test import TestCase, Client
-from django.contrib.messages import constants as msg
 from django.urls import reverse
 from unittest.mock import patch
 from datetime import timedelta, datetime
