@@ -30,3 +30,7 @@ echo "APP PASSKEY" > .keys/nameplate_api_passkey
 Opening the repository in Pycharm should load the project settings correctly.
 
 The project interpreter is a Docker Compose interpreter, running `.../docker/docker-compose-dev.yml`
+
+Create a Run/Debug configuration with the settings shown below:
+
+![Nameplate Server Config](docs/images/server-debug-config.png)
