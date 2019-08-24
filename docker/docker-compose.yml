@@ -1,6 +1,15 @@
-version: '3'
+version: '3.1'
 services:
     nameplate-server:
         build:
           context: ..
           dockerfile: docker/server/Dockerfile
+        secrets:
+          - nameplate_api_id
+          - nameplate_api_passkey
+
+secrets:
+  nameplate_api_id:
+    external: true
+  nameplate_api_passkey:
+    external: true

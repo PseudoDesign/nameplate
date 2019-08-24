@@ -39,6 +39,7 @@ def schedule_room(request, access_token):
         return HttpResponseRedirect(reverse("home"))
     return HttpResponseRedirect(reverse("home"))
 
+
 @require_login
 def room_info(request, access_token):
     room_email = request.GET.get('room_email')
