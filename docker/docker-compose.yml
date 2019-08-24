@@ -10,6 +10,6 @@ services:
 
 secrets:
   nameplate_api_id:
-    external: true
+    file: ../.keys/nameplate_api_id
   nameplate_api_passkey:
-    external: true
+    file: ../.keys/nameplate_api_passkey
