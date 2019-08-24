@@ -6,7 +6,9 @@ A kiosk API for displaying conference room information
 
 ### Required Software
 
+* Pycharm
 * Docker
+* A unix-like shell.  If you're using Windows, try [Cmder](https://cmder.net/).
 
 ### Outlook API keys
 
@@ -18,9 +20,10 @@ Use the endpoint http://127.0.0.1:8000/get_token
 
 ```bash
 # Start or join a swarm
-docker swarm init 
-
-echo "APP ID" | docker secret create nameplate_api_id -
-echo "APP PASSKEY" | docker secret create nameplate_api_passkey - 
+mkdir .keys
+echo "APP ID" > .keys/nameplate_api_id
+echo "APP PASSKEY" > .keys/nameplate_api_passkey
 ```
+
+### Pycharm
 

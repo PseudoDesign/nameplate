@@ -75,5 +75,5 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.7.3 Docker Compose (nameplate-server at [C:\Users\Adam\Documents\Projects\nameplate\docker\docker-compose.yml])" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.7.3 Docker Compose (nameplate-server at [C:\Users\Adam\Documents\Projects\nameplate\docker\docker-compose-dev.yml])" project-jdk-type="Python SDK" />
 </project>
