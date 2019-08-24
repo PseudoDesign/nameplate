@@ -10,6 +10,6 @@ services:
 
 secrets:
   nameplate_api_id:
-    file: ../.keys/nameplate_api_id
+    file: ./../.keys/nameplate_api_id.txt
   nameplate_api_passkey:
-    file: ../.keys/nameplate_api_passkey
+    file: ./../.keys/nameplate_api_passkey.txt
