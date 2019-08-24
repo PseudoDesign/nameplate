@@ -1,12 +1,11 @@
 from urllib.parse import urlencode
-from .appkeys import ExchangeAuthKeys
 from .outlook_service import get_me
 import requests
 import time
 
 # Client ID and secret
-client_id = ExchangeAuthKeys.ID
-client_secret = ExchangeAuthKeys.PASSWORD
+client_id = ""#ExchangeAuthKeys.ID
+client_secret = ""#ExchangeAuthKeys.PASSWORD
 
 # Constant strings for OAuth2 flow
 # The OAuth authority
