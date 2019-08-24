@@ -6,7 +6,7 @@ A kiosk API for displaying conference room information
 
 ### Required Software
 
-* Pycharm
+* Pycharm Professional
 * Docker
 * A unix-like shell.  If you're using Windows, try [Cmder](https://cmder.net/).
 
@@ -27,3 +27,6 @@ echo "APP PASSKEY" > .keys/nameplate_api_passkey
 
 ### Pycharm
 
+Opening the repository in Pycharm should load the project settings correctly.
+
+The project interpreter is a Docker Compose interpreter, running `.../docker/docker-compose-dev.yml`
