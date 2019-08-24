@@ -8,7 +8,7 @@ A kiosk API for displaying conference room information
 
 * Pycharm Professional
 * Docker
-* A unix-like shell.  If you're using Windows, try [Cmder](https://cmder.net/).
+* A unix-like shell - if using Windows, try [Cmder](https://cmder.net/)
 
 ### Outlook API keys
 
